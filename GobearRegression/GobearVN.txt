@@ -1,0 +1,31 @@
+*** Settings ***
+Suite Setup
+Suite Teardown    Close All Browsers
+Library           Selenium2Library
+Library           OperatingSystem
+Library           BuiltIn
+
+*** Variables ***
+${HomepageTitle}    Mọi sự so sánh    # homepage title to make sure homepage is opened
+${Spending}       11000000
+${Income}         33000000
+${City}           1
+
+*** Test Cases ***
+CC-homepag-MainFlow
+    ${CurrentBrowserID}    Open Browser    https://gobear.com/vn    browser=googlechrome
+    Page Should Contain    ${HomepageTitle}
+    Click Element    //label[@ng-if="item.name == 'cashback'"]
+    Click Element    //label[@ng-if="item.name == 'miles'"]
+    Input Text    //input[@ng-model="criteria.totalSpendingPerMonth"]    ${Spending}
+    Input Text    //input[@ng-model="criteria.income"]    ${Income}
+    Select From List By Value    //select[@id='city']    ${City}
+    Click Link    //a[@ng-click="reset();trackClearAll();"]
+    Sleep    1s
+    Click Element    //button[@ng-click="submit();trackInteraction('Credit-CompareNow');"]
+    Wait Until Page Contains Element    //a[@ng-click="buy(item)"]
+    Click Element    //a[@ng-click="buy(item)"][1]
+    Sleep    0.5s
+    Select Window    Forward Loading
+    Page Should Contain    Bạn đã gần như hoàn tất!
+    Capture Page Screenshot

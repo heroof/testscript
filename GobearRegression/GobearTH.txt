@@ -1,0 +1,127 @@
+*** Settings ***
+Suite Setup       Open Browser    https://gobear.com/th    browser=googlechrome    alias=mainbrowser
+Suite Teardown    Close All Browsers
+Test Setup        Set Selenium Speed    1s
+Library           Selenium2Library
+Library           OperatingSystem
+Library           BuiltIn
+
+*** Variables ***
+${HomepageTitle}    เปรียบเทียบผลิตภัณฑ์การเงินที่ตรงความต้องการของคุณที่ GoBear    # homepage title to make sure homepage is opened
+${Spending}       11000
+${Income}         33000
+${FowardingPageTitle}    ยินดีด้วยครับ
+
+*** Test Cases ***
+CC-homepag-MainFlow
+    Open Browser    https://gobear.com/th    browser=googlechrome    alias=mainbrowser
+    Page Should Contain    ${HomepageTitle}
+    Page Should Contain Element    //li[@ng-class="{active:groupTab.creditcard}"]
+    Click Element    //li[@ng-class="{active:groupTab.creditcard}"]
+    Click Element    //label[@for='rewardType_0']
+    Click Element    //label[@for='rewardType_1']
+    Input Text    //input[@ng-model="criteria.totalSpendingPerMonth"]    ${Spending}
+    Input Text    //input[@ng-model="criteria.minIncome"]    ${Income}
+    Click Element    //a[@ng-click="addSpendingCategorie();trackInteraction('Credit-add-spending','click');"]
+    Run Keyword And Continue On Failure    Input Text    //input[@id='spendingPerMonth_0']    1111
+    Run Keyword And Continue On Failure    Input Text    //input[@id='spendingPerMonth_1']    2222
+    Run Keyword And Continue On Failure    Input Text    //input[@id='spendingPerMonth_2']    3333
+    Click Link    //a[@ng-click="reset();trackClearAll();"]
+    Sleep    1s
+    Click Element    //button[@ng-click="submit();trackInteraction('Credit-CompareNow');"]
+    Wait Until Page Contains Element    //a[@ng-click="buy(item)"]
+    Click Element    //a[@ng-click="buy(item)"][1]
+    Sleep    0.5s
+    ${CurrentBrowserID}    Select Window    Forward Loading
+    Page Should Contain    ${FowardingPageTitle}
+    Capture Page Screenshot
+    Wait Until Page Does Not Contain    ${FowardingPageTitle}
+    Capture Page Screenshot
+    select window    main
+    Page Should Contain Element    //section[@class="continue-journey-box continue-ads ng-isolate-scope" and @style="display: block;"]
+    Capture Page Screenshot
+
+TestKeyWord
+    Go To    https://www.gobear.com/th/credit-card/quote-online?rewardType=cashback&totalSpendingPerMonth=1700&minIncome=15000&selectSpendingCategories=%5B%7B%22ID%22:%22779c65bd-500a-41dc-bc4a-a6c945155c49%22,%22Name%22:%22%E0%B8%8A%E0%B9%8A%E0%B8%AD%E0%B8%9B%E0%B8%9B%E0%B8%B4%E0%B9%89%E0%B8%87%22,%22DefaultSpendingRate%22:1,%22DefaultSpending%22:8000,%22IsDefault%22:true,%22spendingPerMonth%22:%221700%22%7D%5D&suppliers=&isSingaporean=true
+    Run Keyword    CCMoreDetail
+
+*** Keywords ***
+CCSearchEdit
+    Wait Until Element Is Visible    //li[@ng-click="showFilter=0;showEdit=!showEdit;"]
+    Click Element    //li[@ng-click="showFilter=0;showEdit=!showEdit;"]
+    Wait Until Element Is Visible    //div[@id="edit-detail-panel" and @style="display: block;"]
+    Input Text    //input[@id="spendingPerMonth_0"]    111
+    Input Text    //input[@id="spendingPerMonth_1"]    222
+    Input Text    //input[@id="spendingPerMonth_2"]    333
+    Input Text    //input[@id="spendingPerMonth_3"]    444
+    Input Text    //input[@id="spendingPerMonth_4"]    555
+    Input Text    //input[@id="spendingPerMonth_5"]    666
+    Input Text    //input[@id="spendingPerMonth_6"]    777
+    Click Element    //a[@class="kd-button \ ng-scope ng-pristine ng-valid" and @value="cashback"]
+    Click Element    //a[@class="kd-button \ ng-scope ng-pristine ng-valid" and @value="miles"]
+    Input Text    //input[@id="textinput18"]    20000
+    Wait Until Element Is Visible    //a[@class="reset right error"and @ng-click="reset();trackInteraction('Reset');"]
+    Click Element    //a[@class="reset right error"and @ng-click="reset();trackInteraction('Reset');"]
+    Wait Until Element Is Visible    //a[@class="reset right"and @ng-click="reset();trackInteraction('Reset');"]
+
+CCSearchFilter
+    Wait Until Element Is Visible    //li[@ng-class="{active:showFilter}"]
+    Click Element    //li[@ng-class="{active:showFilter}"]
+    Wait Until Element Is Visible    //div[@id="filter-detail-panel" and @style="display: block;"]
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="suppliers-0"]]    //div[@class="kd-checkbox checked"][./input[@id="suppliers-0"]]
+    Sleep    2s
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="suppliers-1"]]    //div[@class="kd-checkbox checked"][./input[@id="suppliers-1"]]
+    Sleep    2s
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="suppliers-2"]]    //div[@class="kd-checkbox checked"][./input[@id="suppliers-2"]]
+    Sleep    2s
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="wireless-0"]]    //div[@class="kd-checkbox checked"][./input[@id="wireless-0"]]
+    Sleep    2s
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="wireless-1"]]    //div[@class="kd-checkbox checked"][./input[@id="wireless-1"]]
+    Sleep    2s
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="banks-0"]]    //div[@class="kd-checkbox checked"][./input[@id="banks-0"]]
+    Sleep    2s
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="banks-1"]]    //div[@class="kd-checkbox checked"][./input[@id="banks-1"]]
+    Sleep    2s
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="banks-2"]]    //div[@class="kd-checkbox checked"][./input[@id="banks-2"]]
+    Sleep    2s
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="annual-0"]]    //div[@class="kd-checkbox checked"][./input[@id="annual-0"]]
+    Sleep    2s
+    Run Keyword And Continue On Failure    VerifyCheckbox    //div[@class="kd-checkbox"][./input[@id="annual-1"]]    //div[@class="kd-checkbox checked"][./input[@id="annual-1"]]
+
+VerifyCheckbox
+    [Arguments]    ${CheckboxIdBefore}    ${CheckboxIdAfter}
+    Page Should Contain Element    ${CheckboxIdBefore}
+    Click Element    ${CheckboxIdBefore}
+    Page Should Contain Element    ${CheckboxIdAfter}
+
+CCContextualBear
+    Sleep    11s
+    ${Status}    Run Keyword And Return Status    Element Should Be Visible    //div[@class="guidline-pop-tips"]
+    Run Keyword Unless    ${Status}    Click Element    //figure[@ng-click="helpBearClick();"]/div
+    Click Element    //a[@class="kd-button-red btn-next"]
+    Wait Until Element Is Visible    //a[@class="flex-next"]
+    Click Element    //a[@class="flex-next"]
+    Wait Until Element Is Visible    //a[@class="flex-next"]
+    Click Element    //a[@class="flex-next"]
+    Wait Until Element Is Visible    //a[@class="flex-ok"]
+    Click Element    //a[@class="flex-ok"]
+
+CCMoreDetail
+    Wait Until Element Is Visible    //a[@ng-click="goDetail(item)"]
+    ${count}    Get Matching Xpath Count    //a[@ng-click="goDetail(item)"]
+    log    ${count}
+    Click Element    //a[@ng-click="goDetail(item)"][1]
+    Wait Until Element Is Visible    //section[@id="flippercard1"]
+    Page Should Contain Element    //section[@class="article-wrapper"]
+    Capture Page Screenshot
+    Click Element    //div[@ng-click="hideItem[0]=!hideItem[0]"]
+    Click Element    //div[@ng-click="hideItem[1]=!hideItem[1]"]
+    Click Element    //div[@ng-click="hideItem[2]=!hideItem[2]"]
+    Click Element    //div[@ng-click="hideItem[3]=!hideItem[3]"]
+    Capture Page Screenshot
+    Click Element    //a[@class="kd-button checkout-toggle"]
+    Select Window    Forward Loading
+    Page Should Contain    ${FowardingPageTitle}
+    Capture Page Screenshot
+    select window    main
+    sleep    2s

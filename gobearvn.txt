@@ -1,0 +1,10 @@
+*** Settings ***
+Library           Selenium2Library
+Library           OperatingSystem
+
+*** Test Cases ***
+testdemo
+    open browser    https://gobear.com/vn    browser=googlechrome
+    Click Element    //button[@ng-click="submit();trackInteraction('Credit-CompareNow');"]
+    Wait Until Element Is Visible    //a[@ng-click='buy(item)' and position()=2]/span
+    Click Element    //a[@ng-click='buy(item)' and position()=2]/span
